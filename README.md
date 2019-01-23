@@ -11,3 +11,5 @@ Please check the `improv` branch for latest changes. Master branch has been left
 git clone https://github.com/TonnyTran/01_fog.git
 ```
 * Trong eclipse, chọn File/new/java project --> tạo project tên  là 01_fog
+Xong..........
+

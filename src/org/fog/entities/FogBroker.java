@@ -70,6 +70,9 @@ public class FogBroker extends PowerDatacenterBroker{
                         case SchedulingAlgorithm.BEE:
                                 individual = SchedulingAlgorithm.runBeeAlgorithm(fogDevices, cloudletList);
                                 break;
+                        case SchedulingAlgorithm.PSO:
+                            	individual = SchedulingAlgorithm.runPSOAlgorithm(fogDevices, cloudletList);
+                            	break;
                 }
                 return individual;
         }

@@ -20,6 +20,7 @@ public class SchedulingAlgorithm {
         public static final String LOCAL_SEARCH = "local search";
         public static final String TABU_SEARCH = "tabu search";
         public static final String BEE = "Bee Algorithm";
+        public static final String PSO = "Particle Swarm Optimization";
 
 // the weight value defines the trade-off between time and cost
         public static final double TIME_WEIGHT = 0.5;
@@ -241,4 +242,59 @@ public class SchedulingAlgorithm {
                                 population.printPopulation();
                                 return population.getFittest(0);
         }
+        
+        public static Individual runPSOAlgorithm(List<FogDevice> fogDevices, List<? extends Cloudlet> cloudletList) {
+            // Create GA object
+                            BeeAlgorithm beeAlgorithm = new BeeAlgorithm(NUMBER_INDIVIDUAL, MUTATION_RATE, CROSSOVER_RATE, NUMBER_DRONE);
+
+                            // Calculate the boundary of time and cost
+                            beeAlgorithm.calcMinTimeCost(fogDevices, cloudletList);
+
+                            // Initialize population
+                            Population population = beeAlgorithm.initPopulation(cloudletList.size(), fogDevices.size() - 1);
+                            beeAlgorithm.evalPopulation(population, fogDevices, cloudletList);
+
+                            // Keep track of current generation
+                            int generation = 1;
+
+                            while (generation < NUMBER_ITERATION) {
+                                    System.out.println("\n------------- Generation " + generation + " --------------");
+
+                                    // Apply crossover
+                                    population = beeAlgorithm.crossoverPopulation(population, fogDevices, cloudletList);
+
+                                    // Apply mutation
+                                    population = beeAlgorithm.mutatePopulation(population, fogDevices, cloudletList);
+
+                                    // Find food source using local search
+
+                                    population = beeAlgorithm.findFoodSource(population, fogDevices, cloudletList);
+
+                                    // Evaluate population
+                                    beeAlgorithm.evalPopulation(population, fogDevices, cloudletList);
+
+                                    population.getFittest(0).printGene();
+
+                                    // Print fittest individual from population
+                                    System.out.println("\nBest solution of generation " + generation + ": " + population.getFittest(0).getFitness());
+                                    System.out.println("Makespan: (" + beeAlgorithm.getMinTime() + ")--" + population.getFittest(0).getTime());
+                                    System.out.println("TotalCost: (" + beeAlgorithm.getMinCost() + ")--" + population.getFittest(0).getCost());
+                                    // Increment the current generation
+                                    generation++;
+//                                  population.printPopulation();
+                            }
+
+                            /**
+                             * We're out of the loop now, which means we have a perfect solution on
+                             * our hands. Let's print it out to confirm that it is actually all
+                             * ones, as promised.
+                             */
+
+                            System.out.println(">>>>>>>>>>>>>>>>>>>RESULTS<<<<<<<<<<<<<<<<<<<<<");
+                            System.out.println("Found solution in " + generation + " generations");
+                            population.getFittest(0).printGene();
+                            System.out.println("\nBest solution: " + population.getFittest(0).getFitness() );
+                            population.printPopulation();
+                            return population.getFittest(0);
+    }
 }

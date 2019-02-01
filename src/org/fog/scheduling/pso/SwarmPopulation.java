@@ -8,6 +8,7 @@ import java.util.List;
 public class SwarmPopulation {
 	private List<Particle> swarmPopulation;
 	private double populationFitness = -1;
+	private Particle gBest;
 
 	/**
 	 * Initializes blank population of particles
@@ -25,17 +26,17 @@ public class SwarmPopulation {
 	 * 
 	 * @param populationSize
 	 *            The number of particles in the population
-	 * @param chromosomeLength
+	 * @param xLength
 	 *            The size of each particle's chromosome
 	 */
-	public SwarmPopulation(int populationSize, int chromosomeLength, int maxValue) {
+	public SwarmPopulation(int populationSize, int xLength, int maxValue) {
 		// Initialize the population as an array of particles
 		this.swarmPopulation = new ArrayList<Particle>();
 
 		// Create each particle in turn
 		for (int particleCount = 0; particleCount < populationSize; particleCount++) {
 			// Create an particle, initializing its chromosome to the give length
-			Particle particle = new Particle(chromosomeLength, maxValue);
+			Particle particle = new Particle(xLength, maxValue);
 			// Add particle to population
 			this.swarmPopulation.add(particle);
 		}		
@@ -79,7 +80,6 @@ public class SwarmPopulation {
 	 */
 	public Particle getFittest(int offset) {
 //		sortPopulation();
-
 		// Return the fittest particle
 		return this.swarmPopulation.get(offset);
 	}
@@ -142,5 +142,13 @@ public class SwarmPopulation {
 	public int size() {
 		// TODO Auto-generated method stub
 		return swarmPopulation.size();
+	}
+
+	public Particle getgBest() {
+		return gBest;
+	}
+
+	public void setgBest(Particle gBest) {
+		this.gBest = gBest;
 	}
 }

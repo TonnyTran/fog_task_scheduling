@@ -114,7 +114,7 @@ public class Particle {
 		return this.velocity[x][y];
 	}
 
-	public void setVElement(int x, int y, int v) {
+	public void setVElement(int x, int y, float v) {
 		this.velocity[x][y] = v;
 	}
 

@@ -12,6 +12,8 @@ import org.fog.scheduling.gaEntities.Population;
 import org.fog.scheduling.gaEntities.Service;
 import org.fog.scheduling.localSearchAlgorithm.LocalSearchAlgorithm;
 import org.fog.scheduling.localSearchAlgorithm.Pair;
+import org.fog.scheduling.pso.PSOAlgorithm;
+import org.fog.scheduling.pso.Particle;
 
 public class SchedulingAlgorithm {
 
@@ -246,17 +248,17 @@ public class SchedulingAlgorithm {
 		return population.getFittest(0);
 	}
 
-	public static Individual runPSOAlgorithm(List<FogDevice> fogDevices, List<? extends Cloudlet> cloudletList) {
+	public static Particle runPSOAlgorithm(List<FogDevice> fogDevices, List<? extends Cloudlet> cloudletList) {
 
 		// Create GA object
-		BeeAlgorithm beeAlgorithm = new BeeAlgorithm(NUMBER_INDIVIDUAL, MUTATION_RATE, CROSSOVER_RATE, NUMBER_DRONE);
+		PSOAlgorithm pso = new PSOAlgorithm(100, (float) 0.65, 2, 2);
 
 		// Calculate the boundary of time and cost
-		beeAlgorithm.calcMinTimeCost(fogDevices, cloudletList);
+		pso.calcMinTimeCost(fogDevices, cloudletList);
 
 		// Initialize population
-		Population population = beeAlgorithm.initPopulation(cloudletList.size(), fogDevices.size() - 1);
-		beeAlgorithm.evalPopulation(population, fogDevices, cloudletList);
+		pso.initSwarmPopulation(cloudletList.size(), fogDevices.size() - 1);
+		pso.evalPopulation(fogDevices, cloudletList);
 
 		// Keep track of current generation
 		int generation = 1;
@@ -265,25 +267,15 @@ public class SchedulingAlgorithm {
 			System.out.println("\n------------- Generation " + generation + " --------------");
 
 			// Apply crossover
-			population = beeAlgorithm.crossoverPopulation(population, fogDevices, cloudletList);
+			pso.updatePosition(fogDevices, cloudletList);
 
-			// Apply mutation
-			population = beeAlgorithm.mutatePopulation(population, fogDevices, cloudletList);
-
-			// Find food source using local search
-
-			population = beeAlgorithm.findFoodSource(population, fogDevices, cloudletList);
-
-			// Evaluate population
-			beeAlgorithm.evalPopulation(population, fogDevices, cloudletList);
-
-			population.getFittest(0).printGene();
+			pso.updateGBest();
 
 			// Print fittest individual from population
 			System.out.println(
-					"\nBest solution of generation " + generation + ": " + population.getFittest(0).getFitness());
-			System.out.println("Makespan: (" + beeAlgorithm.getMinTime() + ")--" + population.getFittest(0).getTime());
-			System.out.println("TotalCost: (" + beeAlgorithm.getMinCost() + ")--" + population.getFittest(0).getCost());
+					"\nBest solution of generation " + generation + ": " + pso.swarmPopulation.getgBest().getFitness());
+			System.out.println("Makespan: (" + pso.getMinTime() + ")--" + pso.swarmPopulation.getgBest().getTime());
+			System.out.println("TotalCost: (" + pso.getMinCost() + ")--" + pso.swarmPopulation.getgBest().getCost());
 			// Increment the current generation
 			generation++;
 //		                                      population.printPopulation();
@@ -297,9 +289,8 @@ public class SchedulingAlgorithm {
 
 		System.out.println(">>>>>>>>>>>>>>>>>>>RESULTS<<<<<<<<<<<<<<<<<<<<<");
 		System.out.println("Found solution in " + generation + " generations");
-		population.getFittest(0).printGene();
-		System.out.println("\nBest solution: " + population.getFittest(0).getFitness());
-		population.printPopulation();
-		return population.getFittest(0);
+		System.out.println("\nBest solution: " + pso.swarmPopulation.getgBest().getFitness());
+		
+		return pso.swarmPopulation.getgBest();
 	}
 }

@@ -43,8 +43,8 @@ public class FogSchedulingExample {
         private static final String COMMA_DELIMITER = ",";
 
         public static String fileName = "data_infrucstructure/fog15";
-        public static int number_cloudlet = 200;
-        public static String algorithm = SchedulingAlgorithm.BEE;
+        public static int number_cloudlet = 100;
+        public static String algorithm = SchedulingAlgorithm.PSO;
         public static String filename_cloudlet = "data/data" + number_cloudlet;
         public static String filename_ouput = "results_ex/" + algorithm + "_" + number_cloudlet;
 

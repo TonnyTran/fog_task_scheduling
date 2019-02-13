@@ -12,6 +12,7 @@ import org.fog.scheduling.SchedulingAlgorithm;
 */
 
 public class PSOAlgorithm {
+	public static float VMAX = 30;
 	private int populationSize;
 
 	private float w;
@@ -24,11 +25,11 @@ public class PSOAlgorithm {
 	private double minCost;
 	public SwarmPopulation swarmPopulation;
 
-	public PSOAlgorithm(int populationSize, float w, float c1, float c2) {
+	public PSOAlgorithm(int populationSize) {
 		this.populationSize = populationSize;
-		this.w = w;
-		this.c1 = c1;
-		this.c2 = c2;
+		this.w = 0.9f;
+		this.c1 = 1.5f;
+		this.c2 = 1.5f;
 	}
 
 	/**
@@ -218,7 +219,12 @@ public class PSOAlgorithm {
 					gDistance = 0;
 				}
 
-				vNew = w * particle.getVElement(x, y) + r1 * c1 * pDistance + r2 * c2 * gDistance;
+				vNew = this.w * particle.getVElement(x, y) + r1 * c1 * pDistance + r2 * c2 * gDistance;
+				if (vNew > PSOAlgorithm.VMAX) {
+					vNew = PSOAlgorithm.VMAX;
+				} else if (vNew < -PSOAlgorithm.VMAX) {
+					vNew = -PSOAlgorithm.VMAX;
+				}
 				particle.setVElement(x, y, vNew);
 			}
 		}
@@ -256,5 +262,11 @@ public class PSOAlgorithm {
 		return this.minCost;
 	}
 
+	public float getW() {
+		return w;
+	}
+	public void setW(float w) {
+		this.w = w;
+	}
 
 }

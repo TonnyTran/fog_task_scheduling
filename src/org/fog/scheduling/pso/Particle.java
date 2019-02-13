@@ -8,7 +8,7 @@ import org.fog.scheduling.gaEntities.Service;
 * Contains the positions of the queens in a solution as well as its conflicts, and velocity. 
 * Found at http://mnemstudio.org/ai/pso/pso_tsp_java_ex1.txt
 *
-* @author: James M. Bayon-on
+* @author: Tonny Tran
 * @version: 1.3
 */
 
@@ -26,13 +26,14 @@ public class Particle {
 		this.setVelocity(new float[xLength][maxValue]);
 		for (int x=0; x < xLength; x++) {
 			for(int y=0; y < maxValue; y++) {
-				this.setVElement(x, y, 0);
+				this.setVElement(x, y, (float) (PSOAlgorithm.VMAX * 2 * (Math.random()-0.5)));
 			}			
 		}
 		this.maxValue = maxValue;
 		for (int gene = 0; gene < xLength; gene++) {
 			this.setGene(gene, Service.rand(0, maxValue));
 		}
+		this.pBest = new Particle(xLength, maxValue, 0);
 		this.setpBest(this);
 	}
 // init with fixed value
@@ -141,7 +142,10 @@ public class Particle {
 	}
 
 	public void setpBest(Particle pBest) {
-		this.pBest = pBest;
+		for (int gene = 0; gene < pBest.getXLength(); gene++) {
+			this.pBest.setGene(gene, pBest.getGene(gene));
+		}
+		this.pBest.setFitness(pBest.getFitness());
 	}
 	//end particle
 

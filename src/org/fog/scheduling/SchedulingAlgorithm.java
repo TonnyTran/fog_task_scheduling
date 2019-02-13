@@ -28,8 +28,8 @@ public class SchedulingAlgorithm {
 	public static final double TIME_WEIGHT = 0.5;
 
 //GA and BEE  parameters
-	public static final int NUMBER_INDIVIDUAL = 400;
-	public static final int NUMBER_ITERATION = 1000;
+	public static final int NUMBER_INDIVIDUAL = 50;
+	public static final int NUMBER_ITERATION = 15000;
 
 	public static final double MUTATION_RATE = 0.1;
 	public static final double CROSSOVER_RATE = 0.9;
@@ -224,7 +224,7 @@ public class SchedulingAlgorithm {
 
 			population.getFittest(0).printGene();
 
-			// Print fittest individual from population
+			// Print finest individual from population
 			System.out.println(
 					"\nBest solution of generation " + generation + ": " + population.getFittest(0).getFitness());
 			System.out.println("Makespan: (" + beeAlgorithm.getMinTime() + ")--" + population.getFittest(0).getTime());
@@ -251,7 +251,7 @@ public class SchedulingAlgorithm {
 	public static Particle runPSOAlgorithm(List<FogDevice> fogDevices, List<? extends Cloudlet> cloudletList) {
 
 		// Create GA object
-		PSOAlgorithm pso = new PSOAlgorithm(100, (float) 0.65, 2, 2);
+		PSOAlgorithm pso = new PSOAlgorithm(SchedulingAlgorithm.NUMBER_INDIVIDUAL);
 
 		// Calculate the boundary of time and cost
 		pso.calcMinTimeCost(fogDevices, cloudletList);
@@ -270,12 +270,16 @@ public class SchedulingAlgorithm {
 			pso.updatePosition(fogDevices, cloudletList);
 
 			pso.updateGBest();
+			
+			pso.setW((float) (0.9 - 0.8 * (float) generation/ NUMBER_ITERATION)); 
+			
 
 			// Print fittest individual from population
 			System.out.println(
 					"\nBest solution of generation " + generation + ": " + pso.swarmPopulation.getgBest().getFitness());
 			System.out.println("Makespan: (" + pso.getMinTime() + ")--" + pso.swarmPopulation.getgBest().getTime());
 			System.out.println("TotalCost: (" + pso.getMinCost() + ")--" + pso.swarmPopulation.getgBest().getCost());
+			System.out.println(pso.getW());
 			// Increment the current generation
 			generation++;
 //		                                      population.printPopulation();

@@ -1,6 +1,5 @@
 package org.fog.scheduling;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.cloudbus.cloudsim.Cloudlet;
@@ -9,11 +8,10 @@ import org.fog.scheduling.bee.BeeAlgorithm;
 import org.fog.scheduling.gaEntities.GeneticAlgorithm;
 import org.fog.scheduling.gaEntities.Individual;
 import org.fog.scheduling.gaEntities.Population;
-import org.fog.scheduling.gaEntities.Service;
 import org.fog.scheduling.localSearchAlgorithm.LocalSearchAlgorithm;
-import org.fog.scheduling.localSearchAlgorithm.Pair;
 import org.fog.scheduling.pso.PSOAlgorithm;
 import org.fog.scheduling.pso.Particle;
+import org.fog.scheduling.rr.RRAlgorithm;
 
 public class SchedulingAlgorithm {
 
@@ -23,13 +21,14 @@ public class SchedulingAlgorithm {
 	public static final String TABU_SEARCH = "tabu search";
 	public static final String BEE = "Bee Algorithm";
 	public static final String PSO = "Particle Swarm Optimization";
+	public static final String RR = "Round Robin";
 
 // the weight value defines the trade-off between time and cost
 	public static final double TIME_WEIGHT = 0.5;
 
 //GA and BEE  parameters
-	public static final int NUMBER_INDIVIDUAL = 50;
-	public static final int NUMBER_ITERATION = 15000;
+	public static final int NUMBER_INDIVIDUAL = 100;
+	public static final int NUMBER_ITERATION = 1000;
 
 	public static final double MUTATION_RATE = 0.1;
 	public static final double CROSSOVER_RATE = 0.9;
@@ -237,7 +236,7 @@ public class SchedulingAlgorithm {
 		/**
 		 * We're out of the loop now, which means we have a perfect solution on our
 		 * hands. Let's print it out to confirm that it is actually all ones, as
-		 * promised.
+		 * promised.cloudletList.size(), fogDevices.size() - 1
 		 */
 
 		System.out.println(">>>>>>>>>>>>>>>>>>>RESULTS<<<<<<<<<<<<<<<<<<<<<");
@@ -259,6 +258,7 @@ public class SchedulingAlgorithm {
 		// Initialize population
 		pso.initSwarmPopulation(cloudletList.size(), fogDevices.size() - 1);
 		pso.evalPopulation(fogDevices, cloudletList);
+		pso.swarmPopulation.printPopulation();
 
 		// Keep track of current generation
 		int generation = 1;
@@ -269,7 +269,7 @@ public class SchedulingAlgorithm {
 			// Apply crossover
 			pso.updatePosition(fogDevices, cloudletList);
 
-			pso.updateGBest();
+//			pso.updateGBest();
 			
 			pso.setW((float) (0.9 - 0.8 * (float) generation/ NUMBER_ITERATION)); 
 			
@@ -282,7 +282,8 @@ public class SchedulingAlgorithm {
 			System.out.println(pso.getW());
 			// Increment the current generation
 			generation++;
-//		                                      population.printPopulation();
+			System.out.println(pso.swarmPopulation.getSwarmPopulation().get(0).getVelocity());
+			
 		}
 
 		/**
@@ -290,11 +291,27 @@ public class SchedulingAlgorithm {
 		 * hands. Let's print it out to confirm that it is actually all ones, as
 		 * promised.
 		 */
+		pso.swarmPopulation.printPopulation();
 
 		System.out.println(">>>>>>>>>>>>>>>>>>>RESULTS<<<<<<<<<<<<<<<<<<<<<");
 		System.out.println("Found solution in " + generation + " generations");
 		System.out.println("\nBest solution: " + pso.swarmPopulation.getgBest().getFitness());
 		
 		return pso.swarmPopulation.getgBest();
+	}
+	
+	public static Individual runRoundRobin(List<FogDevice> fogDevices, List<? extends Cloudlet> cloudletList) {
+
+		// Create RR object
+		RRAlgorithm rr = new RRAlgorithm(cloudletList.size(), fogDevices.size() - 1);
+		// Calculate the boundary of time and cost
+		rr.calcMinTimeCost(fogDevices, cloudletList);
+
+		Individual solution = rr.calcSolution(fogDevices, cloudletList);
+
+		System.out.println(">>>>>>>>>>>>>>>>>>>RESULTS<<<<<<<<<<<<<<<<<<<<<");
+		System.out.println("\nBest solution: " + solution.getFitness());
+		
+		return rr.getSolution();
 	}
 }

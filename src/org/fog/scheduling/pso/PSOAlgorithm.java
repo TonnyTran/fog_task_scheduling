@@ -12,7 +12,7 @@ import org.fog.scheduling.SchedulingAlgorithm;
 */
 
 public class PSOAlgorithm {
-	public static float VMAX = 30;
+	public static float VMAX = 10;
 	private int populationSize;
 
 	private float w;
@@ -30,6 +30,7 @@ public class PSOAlgorithm {
 		this.w = 0.9f;
 		this.c1 = 1.5f;
 		this.c2 = 1.5f;
+		
 	}
 
 	/**
@@ -168,13 +169,16 @@ public class PSOAlgorithm {
 	 * @param population the population to evaluate
 	 */
 	public SwarmPopulation evalPopulation(List<FogDevice> fogDevices, List<? extends Cloudlet> cloudletList) {
-
 		// calculate fitness each particle and its pBest
+		this.calcFitness(this.swarmPopulation.getgBest(), fogDevices, cloudletList);
 		for (Particle particle : this.swarmPopulation.getSwarmPopulation()) {
 			this.calcFitness(particle, fogDevices, cloudletList);
 			this.calcFitness(particle.getpBest(), fogDevices, cloudletList);
+			if (this.swarmPopulation.getgBest().getFitness() < particle.getpBest().getFitness()) {
+				this.swarmPopulation.setGBest(particle.getpBest());
+			}
 		}
-		this.updateGBest();
+//		this.updateGBest();
 		return this.swarmPopulation;
 	}
 
@@ -187,9 +191,11 @@ public class PSOAlgorithm {
 			if (this.calcFitness(particle, fogDevices, cloudletList) > this.calcFitness(particle.getpBest(), fogDevices,
 					cloudletList)) {
 				particle.setpBest(particle);
+				if (this.swarmPopulation.getgBest().getFitness() < particle.getpBest().getFitness()) {
+					this.swarmPopulation.setGBest(particle.getpBest());
+				}
 			}
 		}
-
 		return this.swarmPopulation;
 	}
 
@@ -244,16 +250,18 @@ public class PSOAlgorithm {
 		return particle;
 	}
 
-	public Particle updateGBest() {
-		Particle gBest = this.swarmPopulation.getSwarmPopulation().get(0).getpBest();
-		for (Particle particle : this.swarmPopulation.getSwarmPopulation()) {
-			if (particle.getpBest().getFitness() > gBest.getFitness()) {
-				gBest = particle.getpBest();
-			}
-		}
-		this.swarmPopulation.setgBest(gBest);
-		return gBest;
-	}
+//	public Particle updateGBest() {
+//		Particle gBest = this.swarmPopulation.getSwarmPopulation().get(0).getpBest();
+//		for (Particle particle : this.swarmPopulation.getSwarmPopulation()) {
+//			if (particle.getpBest().getFitness() > gBest.getFitness()) {
+//				gBest = particle.getpBest();
+//			}
+//		}
+//		this.swarmPopulation.setgBest(gBest);
+//		return gBest;
+//	}
+	
+	
 	public double getMinTime() {
 		return this.minTime;
 	}

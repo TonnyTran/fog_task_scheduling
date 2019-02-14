@@ -39,7 +39,8 @@ public class SwarmPopulation {
 			Particle particle = new Particle(xLength, maxValue);
 			// Add particle to population
 			this.swarmPopulation.add(particle);
-		}		
+			this.gBest = new Particle(xLength, maxValue);
+		}
 	}
 
 	public void printPopulation() {
@@ -148,7 +149,10 @@ public class SwarmPopulation {
 		return gBest;
 	}
 
-	public void setgBest(Particle gBest) {
-		this.gBest = gBest;
+	public void setGBest(Particle gBest) {
+		for (int gene = 0; gene < gBest.getXLength(); gene++) {
+			this.gBest.setGene(gene, gBest.getGene(gene));
+		}
+		this.gBest.setFitness(gBest.getFitness());
 	}
 }

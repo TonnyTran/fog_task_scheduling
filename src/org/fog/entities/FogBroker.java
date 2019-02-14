@@ -72,6 +72,9 @@ public class FogBroker extends PowerDatacenterBroker{
                         case SchedulingAlgorithm.PSO:
                             	SchedulingAlgorithm.runPSOAlgorithm(fogDevices, cloudletList);
                             	break;
+                        case SchedulingAlgorithm.RR:
+                        	SchedulingAlgorithm.runRoundRobin(fogDevices, cloudletList);
+                        	break;
                 }
                 return ;
         }
